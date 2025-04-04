@@ -2,12 +2,12 @@
 #google
 langchain
 langchain_google_genai
-#langchain_community
-#langchain_core
-#langchain-experimental
+langchain_community
+langchain_core
+langchain-experimental
 #langgraph
 #langsmith
-#langchainhub
+langchainhub
 #wikipedia
 #umap
 #hdbscan
