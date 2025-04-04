@@ -69,7 +69,3 @@ if st.session_state["faiss_created"]:
                 st.markdown(f"### 💡 Answer:\n{answer}")
             except Exception as e:
                 st.error(f"❌ Error: {str(e)}")
-
-
-                if uploaded_file and not st.session_state["faiss_created"]:
-
