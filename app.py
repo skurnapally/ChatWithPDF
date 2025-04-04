@@ -44,6 +44,8 @@ if "temp_dir" not in st.session_state:
     st.session_state["temp_dir"] = None
 if "answers" not in st.session_state:
     st.session_state["answers"] = []
+if "user_question" not in st.session_state:
+    st.session_state["user_question"] = ""
 
 # Upload PDF
 uploaded_file = st.file_uploader("Upload a PDF document", type=["pdf"])
@@ -59,6 +61,7 @@ if uploaded_file:
         st.session_state["faiss_created"] = False
         st.session_state["uploaded_filename"] = uploaded_file.name
         st.session_state["answers"] = []
+        st.session_state["user_question"] = ""
 
     if not st.session_state["faiss_created"]:
         temp_dir = tempfile.mkdtemp()
@@ -78,14 +81,14 @@ if uploaded_file:
 
 # Input question (only visible after FAISS index is created)
 if st.session_state["faiss_created"]:
-    user_question = st.text_input("Ask a question based on the uploaded document")
+    st.session_state["user_question"] = st.text_input("Ask a question based on the uploaded document", value=st.session_state["user_question"])
 
     # Question handler
-    if user_question:
+    if st.session_state["user_question"]:
         with st.spinner("🤖 Thinking..."):
             try:
-                answer = ask_question_with_gemini(st.session_state["faiss_path"], user_question)
-                st.session_state["answers"].append((user_question, answer))
+                answer = ask_question_with_gemini(st.session_state["faiss_path"], st.session_state["user_question"])
+                st.session_state["answers"].append((st.session_state["user_question"], answer))
                 st.markdown(f"### 💡 Answer:\n{answer}")
             except Exception as e:
                 st.error(f"❌ Error: {str(e)}")
