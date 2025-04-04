@@ -30,32 +30,39 @@ page_bg_img = f"""
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-st.title("📄 Chat with your PDF using Gemini 2.0")
+st.title("📄 Document Retriever using Gemini 2.0 + FAISS")
 
-# Use session state to persist FAISS index creation
+# Use session state to persist FAISS index creation and track uploaded file
 if "faiss_created" not in st.session_state:
     st.session_state["faiss_created"] = False
 if "faiss_path" not in st.session_state:
     st.session_state["faiss_path"] = None
+if "uploaded_filename" not in st.session_state:
+    st.session_state["uploaded_filename"] = None
 
 # Upload PDF
 uploaded_file = st.file_uploader("Upload a PDF document", type=["pdf"])
 
-if uploaded_file and not st.session_state["faiss_created"]:
-    if "temp_dir" not in st.session_state:
-        st.session_state.temp_dir = tempfile.TemporaryDirectory()
-    temp_dir = st.session_state.temp_dir
-    #temp_dir = tempfile.TemporaryDirectory()
-    faiss_path = os.path.join(temp_dir.name, "faiss_index")
-    pdf_path = os.path.join(temp_dir.name, uploaded_file.name)
-    with open(pdf_path, "wb") as f:
-        f.write(uploaded_file.read())
+if uploaded_file:
+    # Check if the uploaded file is new
+    if uploaded_file.name != st.session_state["uploaded_filename"]:
+        st.session_state["faiss_created"] = False
+        st.session_state["uploaded_filename"] = uploaded_file.name
 
-    with st.spinner("📚 Processing document and creating FAISS index..."):
-        create_faiss_index(pdf_path, faiss_path)
-    st.session_state["faiss_created"] = True
-    st.session_state["faiss_path"] = faiss_path
-    st.success("✅ Document indexed successfully!")
+    if not st.session_state["faiss_created"]:
+        temp_dir = tempfile.TemporaryDirectory()
+        faiss_path = os.path.join(temp_dir.name, "faiss_index")
+        pdf_path = os.path.join(temp_dir.name, uploaded_file.name)
+
+        with open(pdf_path, "wb") as f:
+            f.write(uploaded_file.read())
+
+        with st.spinner("📚 Processing document and creating FAISS index..."):
+            create_faiss_index(pdf_path, faiss_path)
+
+        st.session_state["faiss_created"] = True
+        st.session_state["faiss_path"] = faiss_path
+        st.success("✅ Document indexed successfully!")
 
 # Input question (only visible after FAISS index is created)
 if st.session_state["faiss_created"]:
