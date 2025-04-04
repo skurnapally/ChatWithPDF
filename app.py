@@ -1,5 +1,3 @@
-# app.py
-
 import os
 import tempfile
 import base64
@@ -81,14 +79,14 @@ if uploaded_file:
 
 # Input question (only visible after FAISS index is created)
 if st.session_state["faiss_created"]:
-    st.session_state["user_question"] = st.text_input("Ask a question based on the uploaded document", value=st.session_state["user_question"])
+    new_question = st.text_input("Ask a question based on the uploaded document")
 
-    # Question handler
-    if st.session_state["user_question"]:
+    if new_question:
         with st.spinner("🤖 Thinking..."):
             try:
-                answer = ask_question_with_gemini(st.session_state["faiss_path"], st.session_state["user_question"])
-                st.session_state["answers"].append((st.session_state["user_question"], answer))
+                answer = ask_question_with_gemini(st.session_state["faiss_path"], new_question)
+                st.session_state["answers"].append((new_question, answer))
+                st.session_state["user_question"] = new_question  # Update stored question
                 st.markdown(f"### 💡 Answer:\n{answer}")
             except Exception as e:
                 st.error(f"❌ Error: {str(e)}")
