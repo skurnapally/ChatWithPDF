@@ -11,7 +11,7 @@ langchainhub
 #wikipedia
 #umap
 #hdbscan
-#sentence_transformers
+sentence_transformers
 #scikit-learn
 #bertopic
 #matplotlib
