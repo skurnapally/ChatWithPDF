@@ -72,6 +72,4 @@ if st.session_state["faiss_created"]:
 
 
                 if uploaded_file and not st.session_state["faiss_created"]:
-    if "temp_dir" not in st.session_state:
-        st.session_state.temp_dir = tempfile.TemporaryDirectory()
-    temp_dir = st.session_state.temp_dir
+
