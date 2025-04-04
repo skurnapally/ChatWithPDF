@@ -42,7 +42,10 @@ if "faiss_path" not in st.session_state:
 uploaded_file = st.file_uploader("Upload a PDF document", type=["pdf"])
 
 if uploaded_file and not st.session_state["faiss_created"]:
-    temp_dir = tempfile.TemporaryDirectory()
+    if "temp_dir" not in st.session_state:
+        st.session_state.temp_dir = tempfile.TemporaryDirectory()
+    temp_dir = st.session_state.temp_dir
+    #temp_dir = tempfile.TemporaryDirectory()
     faiss_path = os.path.join(temp_dir.name, "faiss_index")
     pdf_path = os.path.join(temp_dir.name, uploaded_file.name)
     with open(pdf_path, "wb") as f:
@@ -66,3 +69,9 @@ if st.session_state["faiss_created"]:
                 st.markdown(f"### 💡 Answer:\n{answer}")
             except Exception as e:
                 st.error(f"❌ Error: {str(e)}")
+
+
+                if uploaded_file and not st.session_state["faiss_created"]:
+    if "temp_dir" not in st.session_state:
+        st.session_state.temp_dir = tempfile.TemporaryDirectory()
+    temp_dir = st.session_state.temp_dir
